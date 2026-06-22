@@ -17,7 +17,7 @@
 import _setup  # noqa: F401  -- adds scripts/ to sys.path (file-relative)
 import polars as pl
 from deltalake import DeltaTable, write_deltalake
-from lakehouse import path, reset
+from lakehouse import configure_duckdb, path, reset
 
 table_path = path("scratch", "users_delta")
 reset(table_path)  # idempotent rerun
@@ -77,6 +77,7 @@ print(pl.from_arrow(dt.to_pyarrow_table()).sort("id"))
 
 # %%
 import duckdb
+configure_duckdb(duckdb)
 duckdb.sql(f"SELECT tier, count(*) FROM delta_scan('{table_path}') GROUP BY 1").show()
 
 # %% [markdown]

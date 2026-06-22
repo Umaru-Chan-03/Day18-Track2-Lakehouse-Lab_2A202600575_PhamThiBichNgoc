@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import polars as pl
 from deltalake import DeltaTable, write_deltalake
 
-from lakehouse import path, reset
+from lakehouse import configure_duckdb, path, reset
 
 
 def step(label: str) -> None:
@@ -42,6 +42,7 @@ def main() -> int:
 
         step("DuckDB can scan the Delta table")
         import duckdb
+        configure_duckdb(duckdb)
         rows = duckdb.sql(f"SELECT count(*) FROM delta_scan('{smoke_path}')").fetchone()[0]
         assert rows == 20, f"DuckDB count should be 20, got {rows}"
 

@@ -17,7 +17,9 @@ import _setup  # noqa: F401  -- adds scripts/ to sys.path
 import polars as pl
 import duckdb
 from deltalake import DeltaTable, write_deltalake
-from lakehouse import path, reset
+from lakehouse import configure_duckdb, path, reset
+
+configure_duckdb(duckdb)
 
 BRONZE = path("bronze", "llm_calls_raw")
 SILVER = path("silver", "llm_calls")

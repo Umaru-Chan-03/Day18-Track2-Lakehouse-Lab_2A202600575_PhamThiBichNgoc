@@ -13,6 +13,9 @@ from pathlib import Path
 
 # Repo-local lakehouse — easy to inspect, easy to wipe.
 ROOT = Path(os.environ.get("LAKEHOUSE_ROOT", Path(__file__).resolve().parents[1] / "_lakehouse"))
+DUCKDB_EXTENSION_DIR = Path(
+    os.environ.get("DUCKDB_EXTENSION_DIR", Path(__file__).resolve().parents[1] / ".duckdb_extensions")
+)
 
 
 def path(layer: str, table: str) -> str:
@@ -30,6 +33,13 @@ def reset(*paths: str) -> None:
     import shutil
     for p in paths:
         shutil.rmtree(p, ignore_errors=True)
+
+
+def configure_duckdb(duckdb_module) -> None:
+    """Keep DuckDB's auto-installed extensions inside the repo workspace."""
+    DUCKDB_EXTENSION_DIR.mkdir(parents=True, exist_ok=True)
+    ext_dir = str(DUCKDB_EXTENSION_DIR).replace("\\", "/")
+    duckdb_module.sql(f"SET extension_directory='{ext_dir}'")
 
 
 # ── Convenience: swap to S3 / MinIO with one env var ──
